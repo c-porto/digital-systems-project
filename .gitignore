@@ -1,0 +1,13 @@
+# Used for removing unecessary quartus files
+
+**/db
+
+**/simulation
+
+**/output_files
+
+*.vhd.bak
+
+*.qsf
+
+*.qws
