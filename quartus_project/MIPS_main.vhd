@@ -12,7 +12,8 @@ end MIPS_main;
 architecture ordem of MIPS_main is
 
 --signals
-	signal zi,ci,cpA,cpB,zsoma,csoma,csad_reg,menor: std_logic;
+	signal instr : std_logic_vector(31 downto 0);
+	signal status, RegDst, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg, DVI, DVC : std_logic;
 	
 --component
 	component Mem_Instr is
