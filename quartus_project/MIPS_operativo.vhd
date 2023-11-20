@@ -22,18 +22,16 @@ signal cout, coutfim: std_logic;
 signal ziout, ciout: unsigned(6 downto 0);
 signal somafim, convertfim: unsigned(5 downto 0);
 
-signal pA, pB: unsigned(7 downto 0);
-
 --component
 	component banco_regNbits is
 	generic(N : integer:= 5 );
-	PORT (clk,load: in std_logic;
+	port (clk,load: in std_logic;
 			D1, D2: in  unsigned(N-1 downto 0);
 			Q1, Q2: out unsigned(N-1 downto 0)
 			);
-	END component;
+	end component;
 
-	component muxNbits
+	component muxNbits is
 	generic(N : integer := 5 );
 	port (A, B: in unsigned(N - 1 downto 0);
 			sel: in std_logic;
@@ -67,7 +65,7 @@ signal pA, pB: unsigned(7 downto 0);
 	end component;			
 	
 	component sum is
-	generic(N : INTEGER := 8 );
+	generic(N : INTEGER := 32 );
 	port (add1: in unsigned(N - 1 downto 0);
 			add2: in unsigned(N - 1 downto 0);
 			sum: out unsigned(N - 1 downto 0);
@@ -77,10 +75,6 @@ signal pA, pB: unsigned(7 downto 0);
 
 --port map
 begin
-
-	pA <= unsigned(Mem_A);
-	pB <= unsigned(Mem_B);
-
 --Instruções R e I
 
 mux1: muxNbits --4
@@ -109,7 +103,9 @@ mux3: muxNbits --4
 
 --Instrução BEQ
 
-somador2
+somador1: sum
+	generic map(N => 32)
+	port map(sPC, "100", sum1out
 
 muxZI: muxNbits --1
 	generic map(N => 7)
