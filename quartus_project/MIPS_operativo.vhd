@@ -3,11 +3,9 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 entity MIPS_operativo is
-	port (data1: in std_logic_vector(4 downto 0);
-			data2: in std_logic_vector(4 downto 0);
-			data3: in std_logic_vector(4 downto 0);
-			data4: in std_logic_vector(15 downto 0);
-			clk, RegDst, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg: in std_logic;
+	port (info:  in std_logic_vector(31 downto 0);
+			data:  in std_logic_vector(25 downto 0);
+			clk, RegDst, DVI, DVC, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg: in std_logic;
 			saida: out std_logic_vector(31 downto 0)
 			);
 end MIPS_operativo;
@@ -15,35 +13,27 @@ end MIPS_operativo;
 architecture operation of MIPS_operativo is
 
 --signals
-signal dadoA, dadoB: unsigned(7 downto 0);
-signal fsub: unsigned(7 downto 0);
-signal cs, somador, smux, convertsad: unsigned(13 downto 0);
-signal cout, coutfim: std_logic;
-signal ziout, ciout: unsigned(6 downto 0);
-signal somafim, convertfim: unsigned(5 downto 0);
+signal rA, rB, m1, m2, m3, resultado, zero, dadolido: std_logic_vector(4 downto 0);
+signal m4, m5: std_logic_vector(31 downto 0);
+signal carryout1, carryout2: std_logic;
+signal d1: std_logic_vector(27 downto 0);
+signal d2: std_logic_vector(31 downto 0);
+signal cULA: std_logic_vector(2 downto 0);
 
 --component
 	component banco_regNbits is
 	generic(N : integer:= 5 );
-	port (clk,load: in std_logic;
+	PORT (clk,load: in std_logic;
 			D1, D2: in  unsigned(N-1 downto 0);
 			Q1, Q2: out unsigned(N-1 downto 0)
 			);
-	end component;
+	END component;
 
 	component muxNbits is
 	generic(N : integer := 5 );
 	port (A, B: in unsigned(N - 1 downto 0);
 			sel: in std_logic;
 			y: out unsigned (N - 1 downto 0)
-			);
-	end component;
-	
-	component sub is
-	generic(N : integer := 8 );
-	port (add1: in unsigned(N - 1 downto 0);
-			add2: in unsigned(N - 1 downto 0);
-			result: out unsigned(N - 1 downto 0)
 			);
 	end component;
 	
@@ -72,64 +62,69 @@ signal somafim, convertfim: unsigned(5 downto 0);
 			carry: out std_logic
 			);
 	end component;
+	
+	component ctrlULA is
+	port (ulaIN:  in std_logic_vector(5 downto 0);
+			ulaS:   in std_logic_vector(1 downto 0);
+			ulaOUT: out std_logic_vector(2 downto 0)
+			);
+	end component;
 
 --port map
 begin
+
+d1 <= data & "00";
+
+d2 <= ES & "00";
+
+ES <= ????
+
 --Instruções R e I
 
-mux1: muxNbits --4
+mux1: muxNbits
 	generic map(N => 5)
-	port map(data2, data3, RegDst, smux1);
+	port map(data(20 downto 16), data(15 downto 11), RegDst, m1);
 
-registrador: Banco_regNbits --1
+registrador: Banco_regNbits
 	generic map(N => 5)
-	port map(clk, data1, data2, smux1, smux3, rA, rB);
+	port map(clk, data(25 downto 21), data(20 downto 16), m1, m3, rA, rB);
 	
-mux2: muxNbits --4
+mux2: muxNbits
 	generic map(N => 5)
-	port map(rB, ES, ULAFonte, smux2);
+	port map(rB, ES, ULAFonte, m2);
+	
+controleULA: ctrlULA
+	port map(data(5 downto 0), ULAOp, cULA);
 	
 ULALA: ula
 	generic map(N => 5)
-	port map(cULA, rA, smux2, resultado, zero);
+	port map(cULA, rA, m2, resultado, zero);
 
 Mem_Dados: memNbits
 	generic map(N => 5)
 	port map(clk, resultado, rB, dadolido);
 	
-mux3: muxNbits --4
+mux3: muxNbits
 	generic map(N => 5)
-	port map(resultado, dadolido, MemParaReg, smux3);
+	port map(resultado, dadolido, MemParaReg, m3);
 
---Instrução BEQ
+--Instrução BEQ & jump
 
 somador1: sum
 	generic map(N => 32)
-	port map(sPC, "100", sum1out
-
-muxZI: muxNbits --1
-	generic map(N => 7)
-	port map(coutfim & somafim, zi, ziout);
+	port map(info, "100", s1, carryout1);
 	
-regCI: regNbits --2
-	generic map(N => 7)
-	port map(clk, ci, ziout, ciout);
-
-menor <= not ciout(6); --3
-convertfim <= ciout(5 downto 0); --3
-
-somaEND: sum --4
-	generic map(N => 6)
-	port map("000001", ciout(5 downto 0), somafim, coutfim);
-	
-	fim <= std_logic_vector(convertfim);
-	sad <= std_logic_vector(convertsad);
-	
---Instrução jump
-
-mux5: muxNbits --4
+somador2: sum
 	generic map(N => 32)
-	port map(resultado, dadolido, MemParaReg, saida);
-
+	port map(s1, d2, s2, carryout2);
+	
+mux4: muxNbits --1
+	generic map(N => 32)
+	port map(s1, s2, (DVC and zero), m4);
+	
+mux5: muxNbits --1
+	generic map(N => 32)
+	port map(m4, d1 & s1(31 downto 28), DVI, saida);
+	
 end operation;
 
