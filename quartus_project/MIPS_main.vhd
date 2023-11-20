@@ -12,8 +12,7 @@ end MIPS_main;
 architecture ordem of MIPS_main is
 
 --signals
-	signal instr : std_logic_vector(31 downto 0);
-	signal status, RegDst, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg, DVI, DVC : std_logic;
+	signal zi,ci,cpA,cpB,zsoma,csoma,csad_reg,menor: std_logic;
 	
 --component
 	component Mem_Instr is
@@ -30,11 +29,9 @@ architecture ordem of MIPS_main is
 	end component;
 	
 	component MIPS_operativo is
-	port (data1: in std_logic_vector(4 downto 0);
-			data2: in std_logic_vector(4 downto 0);
-			data3: in std_logic_vector(4 downto 0);
-			data4: in std_logic_vector(15 downto 0);
-			clk, RegDst, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg: in std_logic;
+	port (info:  in std_logic_vector(31 downto 0);
+			data:  in std_logic_vector(25 downto 0);
+			clk, RegDst, DVI, DVC, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg: in std_logic;
 			saida: out std_logic_vector(31 downto 0)
 			);
 	end component;
@@ -46,6 +43,6 @@ begin
 
 	BC: MIPS_fsmd port map(instr(31 downto 26), status, RegDst, DVI, DVC, LerMem, MemParaReg, ULAOp, EscMem, ULAFonte, EscReg);
 	
-	BO: MIPS_operativo port map(instr(25 downto 21), instr(20 downto 16), instr(15 downto 11), instr(15 downto 0), clk, RegDst, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg, ePC);
+	BO: MIPS_operativo port map(sPC, instr(25 downto 0), clk, RegDst, DVI, DVC, LerMem, MemParaReg, UlaOp, EscMem, ULAFonte, EscReg, ePC);
 
 end ordem;
