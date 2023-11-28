@@ -3,13 +3,12 @@ USE ieee.std_logic_1164.all;
 USE ieee.numeric_std.ALL;
 
 
-
 entity registrador is
-generic (N : integer:= 8);
+generic (N : integer:= 32);
 	PORT (
 			clk,load : in std_logic;
-			D : in unsigned (N-1 downto 0);
-			Q : out unsigned(N-1 downto 0)
+			D : in std_logic_vector (N-1 downto 0);
+			Q : out std_logic_vector(N-1 downto 0)
 			);
 END registrador;
 

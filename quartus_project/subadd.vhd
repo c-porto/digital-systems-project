@@ -1,21 +1,26 @@
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
+use ieee.std_logic_unsigned.all;
 
 entity subadd is
-generic ( N : INTEGER := 8 );
+generic ( N : INTEGER := 64 );
 	port (
-			add1 : in unsigned(N - 1 downto 0);
-			add2 : in unsigned(N - 1 downto 0);
+			add1 : in std_logic_vector(N - 1 downto 0);
+			add2 : in std_logic_vector(N - 1 downto 0);
 			op: in std_logic;
-			sumsub : out unsigned(N - 1 downto 0)
+			sumsub : out std_logic_vector(N - 1 downto 0)
 			);
 end subadd;
 
 architecture rtl of subadd is
-signal diff: signed(N downto 0);
+signal sum: std_logic_vector(N - 1 downto 0);
+signal sub: std_logic_vector(N - 1 downto 0);
+
 begin
-	diff <= signed('0'&add1) - signed('0'&add2);
-	sumsub <= add1 + add2 when op = '0' else
-					unsigned(diff(N-1 downto 0));
+	sum <= add1 + add2;
+	sub <= add1 - add2;
+	WITH op SELECT
+		sumsub <= sum WHEN '0',
+					 sub WHEN OTHERS;	
 END rtl;
