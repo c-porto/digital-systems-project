@@ -210,8 +210,6 @@ signal mux_carry,scarry,carry: std_logic_vector(0 downto 0);
 	generic map(N => 32)
 	port map(clk,cSL,SL_t,SL);
 	
-	-- setonlessthen,iniszero,q0,endloop: out std_logic;
-	
 	setonlessthen <= '1' when(A < B) else '0';
 	zero_out <= '1' when (A = B) else '0';
 	q0 <= q_0;
