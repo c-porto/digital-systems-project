@@ -3,7 +3,7 @@ USE ieee.std_logic_1164.all;
 
 ENTITY ula_control IS
 	PORT
-		(clk, iniciar, setonlessthen,iniszero,q0,endloop : IN STD_LOGIC;
+		(clk, rst, iniciar, setonlessthen,iniszero,q0,endloop : IN STD_LOGIC;
 		control: in std_logic_vector(3 downto 0);
 		pronto,shift,cA,cB,cc,cca,zcount,cACC,cQ,cM,zacc,zcarry,cS,cSL,cSH: OUT STD_LOGIC
 		);
@@ -81,9 +81,11 @@ ARCHITECTURE behavior of ula_control is
 			END CASE;
 		END PROCESS;
 		
-		PROCESS (clk)
+		PROCESS (clk, rst)
 		BEGIN
-			IF (rising_edge(clk)) THEN
+			IF rst = '1' THEN
+					Current_State <= S0;
+				ELSIF (rising_edge(clk)) THEN
 					Current_State <= Next_State;
 			END IF;
 		END PROCESS;
