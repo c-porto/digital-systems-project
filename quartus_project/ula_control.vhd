@@ -13,7 +13,7 @@ ARCHITECTURE behavior of ula_control is
 	TYPE State is (S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14);
 	SIGNAL Current_State, Next_State : State;
 	Begin
-		PROCESS (iniciar,setonlessthen,iniszero,q0,endloop)
+		PROCESS (iniciar,setonlessthen,iniszero,q0,endloop,control)
 		BEGIN
 			CASE Current_State is
 				WHEN S0 => 	
@@ -39,6 +39,8 @@ ARCHITECTURE behavior of ula_control is
 							ELSE 
 								Next_State <= S12;
 							END IF;
+						ELSE 
+							Next_State <= S1;
 						END IF;
 				WHEN S2 =>
 						Next_State <= S14;
