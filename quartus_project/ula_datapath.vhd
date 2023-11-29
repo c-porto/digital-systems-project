@@ -17,7 +17,7 @@ architecture rtl of ula_datapath is
 
 signal A,B,M,Q,ACC,partial_sum,multisum,SH_t,SL_t: std_logic_vector(31 downto 0);
 signal zero: std_logic_vector(31 downto 0) := (others => '0');
-signal plus_minus,and_or,after_mux,partial: std_logic_vector(63 downto 0);
+signal plus_minus,and_or,after_mux,partial,S: std_logic_vector(63 downto 0);
 signal zero_64: std_logic_vector(62 downto 0) := (others => '0');
 signal seton,isin,acc0,q_0,carrys,sscarry: std_logic;
 signal counter,pcounter,mux_counter: std_logic_vector(5 downto 0);
@@ -196,11 +196,15 @@ signal mux_carry,scarry,carry: std_logic_vector(0 downto 0);
 	
 	Imux_2_1_32bit_SH: mux_2_1_32bit
 	generic map(N => 32)
-	port map(partial(63 downto 32),ACC,not controle(3),SH_t);
+	port map(S(63 downto 32),ACC,not controle(3),SH_t);
 	
 	Imux_2_1_32bit_SL: mux_2_1_32bit
 	generic map(N => 32)
-	port map(partial(31 downto 0),Q,not controle(3),SL_t);
+	port map(S(31 downto 0),Q,not controle(3),SL_t);
+	
+	ISS: registrador
+	generic map(N => 64)
+	port map(clk,cS,partial,S);
 	
 	ISH: registrador
 	generic map(N => 32)
@@ -215,5 +219,6 @@ signal mux_carry,scarry,carry: std_logic_vector(0 downto 0);
 	q0 <= q_0;
 	iniszero <= '1' when ((A = zero) or (B = zero)) else '0';
 	endloop <= '1' when (pcounter = "000000") else '0';
+	
 	
 end rtl;
