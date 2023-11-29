@@ -9,7 +9,7 @@ entity ula_mips is
 			IN_2: in std_logic_vector(31 downto 0);
 			SL: out std_logic_vector(31 downto 0);
 			SH: out std_logic_vector(31 downto 0);
-			clk,iniciar: in std_logic;
+			clk, rst, iniciar: in std_logic;
 			pronto: out std_logic
 			);
 end ula_mips;
@@ -23,7 +23,7 @@ architecture ordem of ula_mips is
 
 	component ula_control is
 	port (
-			clk, iniciar, setonlessthen,iniszero,q0,endloop: in std_logic;
+			clk, rst, iniciar, setonlessthen,iniszero,q0,endloop: in std_logic;
 			control : in std_logic_vector(3 downto 0);
 			pronto,shift,cA,cB,cc,cca,zcount,cACC,cQ,cM,zacc,zcarry,cS,cSL,cSH: out std_logic
 			);
@@ -43,7 +43,7 @@ architecture ordem of ula_mips is
 --port map
 begin 
 
-	BC: ula_control port map(clk, iniciar, setonlessthen,In_ls_Zero,q0,endloop, controle,pronto,shift,cA,cB,cc,cca,zcount,cACC,cQ,cM,zacc,zcarry,cS,cSL,cSH);
+	BC: ula_control port map(clk, rst, iniciar, setonlessthen,In_ls_Zero,q0,endloop, controle,pronto,shift,cA,cB,cc,cca,zcount,cACC,cQ,cM,zacc,zcarry,cS,cSL,cSH);
 	
 	BO: ula_datapath port map(IN_1, IN_2, controle, clk, shift, cA, cB, cc, cca, zcarry, zcount, cACC, cQ, cM, zacc, cS, cSL, cSH,zero_sig,setonlessthen,In_ls_Zero,q0,endloop,SL,SH);
 
