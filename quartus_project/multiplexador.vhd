@@ -3,18 +3,17 @@ USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
 entity multiplexador is
-generic (N : integer := 1);
+
      port (
-             A: in std_logic_vector(N - 1 downto 0);
+             A: in std_logic;
              sel : in std_logic;
-            y : out std_logic_vector (N - 1 downto 0)
+            y : out std_logic
            );
 end multiplexador;
 
 architecture arch of multiplexador is
-signal zero: std_logic_vector (N - 1 downto 0) := (others => '0');
 begin
     with sel select
         y <= A when '0',
-            zero when others;       
+            '0' when others;       
  end arch;
