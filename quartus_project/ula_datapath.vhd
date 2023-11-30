@@ -164,12 +164,17 @@ signal mux_carry,scarry,carry: std_logic_vector(0 downto 0);
 	generic map(N => 6)
 	port map(clk,cc,mux_counter,pcounter);
 	
+	Isumsubcount: subadd
+	generic map(N => 6)
+	port map(pcounter,"000001",'1',counter);
+	
 	IM: registrador
 	generic map(N => 32)
 	port map(clk,cM,A,M);
 	
 	Icarrymux: multiplexador
-	port map(carry,cca,mux_carry);
+	generic map(N => 1)
+	port map(carry,zcarry,mux_carry);
 	
 	IC: registrador
 	generic map(N => 1)
@@ -196,11 +201,11 @@ signal mux_carry,scarry,carry: std_logic_vector(0 downto 0);
 	
 	Imux_2_1_32bit_SH: mux_2_1_32bit
 	generic map(N => 32)
-	port map(S(63 downto 32),ACC,not controle(3),SH_t);
+	port map(ACC,S(63 downto 32),(not controle(3)),SH_t);
 	
 	Imux_2_1_32bit_SL: mux_2_1_32bit
 	generic map(N => 32)
-	port map(S(31 downto 0),Q,not controle(3),SL_t);
+	port map(Q,S(31 downto 0),(not controle(3)),SL_t);
 	
 	ISS: registrador
 	generic map(N => 64)

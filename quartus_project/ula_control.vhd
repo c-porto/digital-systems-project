@@ -25,15 +25,15 @@ ARCHITECTURE behavior of ula_control is
 				WHEN S1 => 	
 						IF control(3) = '1' THEN
 							Next_State <= S6;
-						ELSIF control(3 downto 0) = "0010" THEN
+						ELSIF control = "0010" THEN
 							Next_State <= S2;
-						ELSIF control(3 downto 0) = "0110" THEN
+						ELSIF control = "0110" THEN
 							Next_State <= S3;
-						ELSIF control(3 downto 0) = "0000" THEN
+						ELSIF control = "0000" THEN
 							Next_State <= S5;
-						ELSIF control(3 downto 0) = "0001" THEN
+						ELSIF control = "0001" THEN
 							Next_State <= S4;
-						ELSIF control(3 downto 0) = "0111" THEN
+						ELSIF control = "0111" THEN
 							IF setonlessthen = '0' THEN 
 								Next_State <= S13;
 							ELSE 
